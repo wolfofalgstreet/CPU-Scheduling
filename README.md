@@ -34,4 +34,17 @@ end
 | c2-fcfs.in    | 2 processes scheduled *First-Come First-Served*|
 | c2-rr.in      | 2 processes scheduled *Round-Robin*            |
 | c2-sjf.in     | 2 processes scheduled *preemptive Shortest Job First* |
-| c5-fcfs.in    | 5 processes scheduled *First-Come First-Served* |
+| c5-fcfs.in    | 5 processes scheduled *First-Come First-Served*|
+| c5-rr.in      | 5 processes scheduled *Round-Robin*            |
+| c5-sjf.in     | 5 processes scheduled *preemptive Shortest Job First* |
+| c10-fcfs.in   | 10 processes scheduled *First-Come First-Served* |
+| c10-rr.in     | 10 processes scheduled *Round-Robin* |
+| c10-sjf.in    | 10 processes scheduled *preemptive Shortest Job First* |
+
+## Command Line Inputs
+The *command line inputs* or *cli* are the input file name as the first parameter and the output file name as the second parameter.
+For example:
+```
+./pa1 c5-fcfs.in c5-fcfs.stu
+```
+where the files’ extensions correspond to `input` and `student`.
