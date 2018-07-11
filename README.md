@@ -13,8 +13,10 @@ The Preemptive Shortest Job First selects the process for execution which has th
 ### Round-Robin 
 Round-Robin was originally built for time-sharing systems. It works on the premise of providing a rigorous enforcement of an interrupt every configured time interval, then swapping to the next task in the process listat the moment of the interrupt.  This scheduling algorithm treats the process list as a circular list until each process is complete. New processes can be added infinitum. Note that the Round-Robin algorithm requires a configuration of the time quantum for the period of time used for the process to be in the CPU. Once the period expires the next process in the list will have CPU resources until its time quantum expires.
 
-## Input
+## Input Format
 The input file will be passed as the first command line argument. Also the program ignores everything on a line after a '#' mark and ignore additional spaces in the input file.
+
+Note: Blank lines are not considered for processing.
 
 ```
 processcount 2 # Read 2 processes
@@ -25,3 +27,11 @@ process name P1 arrival 3 burst 5
 process name P2 arrival 0 burst 9
 end
 ```
+
+### Input Files
+| File Name     | Description                                    |
+| ------------- |:----------------------------------------------:| 
+| c2-fcfs.in    | 2 processes scheduled *First-Come First-Served*|
+| c2-rr.in      | 2 processes scheduled *Round-Robin*            |
+| c2-sjf.in     | 2 processes scheduled *preemptive Shortest Job First* |
+| c5-fcfs.in    | 5 processes scheduled *First-Come First-Served* |
