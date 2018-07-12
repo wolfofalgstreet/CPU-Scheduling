@@ -29,17 +29,17 @@ end
 ```
 
 ### Input Files
-| File Name     | Description                                    |
-| ------------- |:----------------------------------------------:| 
-| c2-fcfs.in    | 2 processes scheduled *First-Come First-Served*|
-| c2-rr.in      | 2 processes scheduled *Round-Robin*            |
-| c2-sjf.in     | 2 processes scheduled *preemptive Shortest Job First* |
-| c5-fcfs.in    | 5 processes scheduled *First-Come First-Served*|
-| c5-rr.in      | 5 processes scheduled *Round-Robin*            |
-| c5-sjf.in     | 5 processes scheduled *preemptive Shortest Job First* |
-| c10-fcfs.in   | 10 processes scheduled *First-Come First-Served* |
-| c10-rr.in     | 10 processes scheduled *Round-Robin* |
-| c10-sjf.in    | 10 processes scheduled *preemptive Shortest Job First* |
+| File Name     | Description                                    | Output File |
+| ------------- |:----------------------------------------------:|:------------:|
+| c2-fcfs.in    | 2 processes scheduled *First-Come First-Served*|c2-fcfs.base|
+| c2-rr.in      | 2 processes scheduled *Round-Robin*            |c2-rr.base  |
+| c2-sjf.in     | 2 processes scheduled *preemptive Shortest Job First* |c2-sjf.base|
+| c5-fcfs.in    | 5 processes scheduled *First-Come First-Served*|c5-fcfs.base|
+| c5-rr.in      | 5 processes scheduled *Round-Robin*            |c5-rr.base|
+| c5-sjf.in     | 5 processes scheduled *preemptive Shortest Job First* |c5-sjf.base|
+| c10-fcfs.in   | 10 processes scheduled *First-Come First-Served* |c10-fcfs.base|
+| c10-rr.in     | 10 processes scheduled *Round-Robin* |c10-rr.base|
+| c10-sjf.in    | 10 processes scheduled *preemptive Shortest Job First* |c10-sjf.base|
 
 ## Command Line Inputs
 The *command line inputs* or *cli* are the input file name as the first parameter and the output file name as the second parameter.
