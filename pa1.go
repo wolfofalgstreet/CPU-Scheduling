@@ -90,15 +90,33 @@ func toInt(word string, words []string) (int) {
   return num
 }
 
+// -------------------------------- //
+// Execute FCFS Scheduling Algotihm //
+func runFCFS()() {
+
+}
+
+// -------------------------------- //
+// Execute SJF Scheduling Algotihm //
+func runSJF()() {
+
+}
+
+// -------------------------------- //
+// Execute RR Scheduling Algotihm //
+func runRR()() {
+
+}
+
+
 func main () {
 
   // Reading input file
-  input, err := os.Open("c10-rr.in")
+  input, err := os.Open("c10-rr.in") //c10-rr.in
   checkErr(err)
   defer input.Close()
 
   // Scanning word by Word
-  fmt.Println("About to read word by word:\n") //
   scanner := bufio.NewScanner(input)
   scanner.Split(bufio.ScanWords)
 
@@ -113,18 +131,25 @@ func main () {
   fmt.Println("Words list:\n")
   for _, word := range words {
     count = count + 1
-    if word == "9" {
-      fmt.Println("runfor found at: ", count)
-    }
-
     fmt.Println("word: ",word, " count: ", count)
   }
 
   // Scheduling Algorithm setup info
-
-
-  // Running processes on selected algorithm
   processCount, runFor, quantum, algorithm := setupInfo(words)
+
+  // Execute selected scheduling algorithm
+  switch algorithm {
+  case 1:           // First-Come First-Served
+    fmt.Println("Run: ", algorithm)
+  case 2:           // Shortest-Job First
+    fmt.Println("Run: ", algorithm)
+  case 3:           // Round Robin
+    fmt.Println("Run: ", algorithm)
+  }
+
+
+
+
   processCount = processCount
   runFor = runFor
   quantum = quantum
