@@ -1,0 +1,18 @@
+  2 processes
+Using First-Come First-Served
+Time   0 : P1 arrived
+Time   0 : P1 selected (burst   5)
+Time   5 : P1 finished
+Time   5 : Idle
+Time   6 : Idle
+Time   7 : P2 arrived
+Time   7 : P2 selected (burst   9)
+Time  16 : P2 finished
+Time  16 : Idle
+Time  17 : Idle
+Time  18 : Idle
+Time  19 : Idle
+Finished at time  20
+
+P1 wait   0 turnaround   5
+P2 wait   0 turnaround   9

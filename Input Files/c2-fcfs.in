@@ -1,0 +1,6 @@
+processcount 2	# Read 2 processes
+runfor 20	# Run for 20 time units
+use fcfs
+process name P1 arrival 0 burst 5
+process name P2 arrival 7 burst 9
+end
