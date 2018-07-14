@@ -103,7 +103,6 @@ func lookConvert(word string, words []string) (int) {
   if err != nil {
     fmt.Println("Conversion of var ", word, " failed!\n")
   }
-
   return num
 }
 
@@ -117,11 +116,13 @@ type process struct {
 }
 
 
-// ----------------------------------------------- //
-// Get processes information needed for scheduling //
-func qProcesses(algorithm int)([]process) {
-  // Reading file
-  file, err := os.Open("c10-rr.in")
+// ------------------------------------------------- //
+// Get processes information needed for scheduling   //
+// Return all precesses as array of process structs  //
+func qProcesses(algorithm int, input string)([]process) {
+
+  // Reading file and close when done
+  file, err := os.Open(input)
   checkErr(err)
   defer file.Close()
 
@@ -132,43 +133,49 @@ func qProcesses(algorithm int)([]process) {
   // Storage
   var lines []string
   var procs []process
+  var proc *process
 
-  //fmt.Println("About to read line by line:\n")
-
-  counter := 0
-  procLine := 0
+  // Scanning lines
   for scanner.Scan() {
     lines = append(lines, scanner.Text())
-    if algorithm == 3 {
-      
-    }
-    fmt.Println(lines[counter], "\n")
-    counter = counter + 1
   }
-  fmt.Println("lINES[4]: ", lines[4]) //
-  procLine = procLine
-  return procs
 
+  // Extract processes info onto struct array
+  for i := 0; i < len(lines) - 1; i = i + 1 {
+
+    // Will only extract Round Robin format
+    if algorithm == 3 && i > 3 {
+      proc = extractInfo(lines[i])
+      procs = append(procs, *proc)
+
+    // Will extract anything else
+    } else if algorithm != 3 && i > 2 {
+      proc = extractInfo(lines[i])
+      procs = append(procs, *proc)
+    }
+  }
+  return procs
 }
 
 // ----------------------------------------------- //
 // Returns a process struct from string            //
 // No need to search since input is structured as: //
 // "process name ID arrival # burst #"             //
-func extractInfo(line string) (process) {
+func extractInfo(line string) (*process) {
 
-  // Allocating resources
-  var proc process
+  // Allocating memory for process' info extraction
+  proc := new(process)
   var words []string
 
   // Splitting string
   words = strings.Split(line, " ")
 
-  // Defining struct
-  proc = process{ID: words[2], arrival: toInteger(words[4]), burst: toInteger(words[6])}
-
-  for i := 0; i < len(words); i = i + 1 {
-    fmt.Println("Index", i, ": ", words[i], "\n")
+  // Parse info to struct for lines with > 7 words
+  if len(words) > 6 {
+    fmt.Println("word: ", words, "len: ", len(words))
+    proc.ID = words[2]
+    proc.arrival = toInteger(words[4])
+    proc.burst = toInteger(words[6])
   }
   return proc
 }
@@ -196,8 +203,9 @@ func runRR()() {
 
 func main () {
 
-  // Reading input file
-  input, err := os.Open("c2-fcfs.in") //c10-rr.in
+  // Read file and close it when done
+  file := "c10-fcfs.in"
+  input, err := os.Open(file)
   checkErr(err)
   defer input.Close()
 
@@ -209,14 +217,6 @@ func main () {
   var words []string
   for scanner.Scan() {
     words = append(words, scanner.Text())
-  }
-
-  // Checking contents of words[]
-  count := 0
-  fmt.Println("Words list:\n")
-  for _, word := range words {
-    count = count + 1
-    fmt.Println("word: ",word, " count: ", count)
   }
 
   // Scheduling Algorithm setup info
@@ -241,31 +241,10 @@ func main () {
 
   fmt.Println("pcount: ", processCount, " runfor: ", runFor, " quantum: ", quantum, "algorithm: ", algorithm)
 
-  var p = "hello this is not your average hello world"
-  fmt.Println("About to print: ", p)
-  str := strings.Split(p, " ")
 
-  // Testing splitting text and accessing words
-  fmt.Println("Splitting string:\n", strings.Split(p, " "))
-  fmt.Println("Printing by index: \n", "Index 0: ", str[0], "\nIndex 6: ", str[5])
-  if strings.Contains(p, "world") {
-    fmt.Println("World was found at index: ", strings.Index(p, "world"))
-  }
-
-  ss := qProcesses(algorithm)
+  ss := qProcesses(algorithm, file)
   ss = ss
-
-  // Testing struct info
-  var newproc process
-  newproc = extractInfo("process name P2 arrival 0 burst 9")
-  newproc = newproc
-  fmt.Println("Reading process struct:\n")
-  fmt.Println("ID: ", newproc.ID, " arrival: ", newproc.arrival, " burst: ", newproc.burst)
-
-  // find use
-    // check if rr
-  // extract processes
-
+  fmt.Println("ID: ",ss[9].ID)
 
 
 
