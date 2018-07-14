@@ -189,7 +189,7 @@ func sortArrivals(procs []process)([]process) {
   // Appending flags to array
   for i := 0; i < len(procs); i++ { // debug dont need
     sorted = append(sorted, procs[i].arrival)
-    fmt.Println("Unsorted, ID: ",procs[i].ID," arrival: ", sorted[i])
+    //fmt.Println("Unsorted, ID: ",procs[i].ID," arrival: ", sorted[i])
   }
 
 
@@ -203,9 +203,9 @@ func sortArrivals(procs []process)([]process) {
   }
 
 
-  fmt.Println("\n")
+  //fmt.Println("\n")
   for i := 0; i < len(procs); i++ {
-    fmt.Println("Sorted, ID: ",procs[i].ID," arrival: ", procs[i].arrival)
+    //fmt.Println("Sorted, ID: ",procs[i].ID," arrival: ", procs[i].arrival, " burst: ", procs[i].burst)
   }
   return procs
 }
@@ -216,55 +216,65 @@ func sortArrivals(procs []process)([]process) {
 // Execute FCFS Scheduling Algotihm //
 func runFCFS(proccessNum, runFor, quantum int, procs []process)() {
 
-  time := 0
-  run := true
-  proc := 0
-  busy := false
+  time := 0       // Clock
+  run := true     // Starts/Terminates algorithm
+  proc := 0       // Index of current process
+  busy := false   // True indicates a process is running
+  finish := 0     // Index of process that is running
+  began := 0      // Flag tracks when in time the process started
 
   for run {
 
     // Process arrived
-    if time == procs[proc].arrival {
-      fmt.Println("Time ", time, " : ", procs[proc].ID, " arrived")
+    for i := 0; i < len(procs); i = i + 1 {
+      if time == procs[i].arrival {
+        fmt.Println("Time ", time, " : ", procs[i].ID, " arrived")
+        break
+      }
     }
 
     // Process Finished
-    if time == (procs[proc].arrival + procs[proc].burst) {
-      fmt.Println("Time ", time, " : ", procs[proc].ID, " finished")
+    if (time == began + procs[finish].burst) && busy {
+      fmt.Println("Time ", time, " : ", procs[finish].ID, " finished")
       busy = false
+      if proc < len(procs) {
+        proc = proc + 1
+      }
     }
 
-
-    // If no process running, then select next arrival
-    if (time == procs[proc].arrival) && !busy {
-      fmt.Println("Time ", time, " : ", procs[proc].ID, " selected (burst ", procs[proc].burst,")")
-      busy = true
+    // Selecting process to run next
+    if !busy && proc < len(procs){
+      if time >= procs[proc].arrival {
+        fmt.Println("Time ", time, " : ", procs[proc].ID, " selected (burst ", procs[proc].burst,")")
+        busy = true
+        finish = proc
+        began = time
+      }
     }
 
-
-    if time >= procs[proc].arrival + procs[proc].burst {
-      proc = proc + 1
+    // Processor in idle state
+    if !busy && (procs[finish].arrival < time) {
+      fmt.Println("Time ", time, " : ", " Iddle")
     }
 
-    //fmt.Println("TIME: ", time)
     time = time + 1
 
     // Only run for given time
     if time == runFor {
+      fmt.Println("Finished at time ", time)
       run = false
     }
-
   }
-
 }
 
-// -------------------------------- //
+
+// ------------------------------- //
 // Execute SJF Scheduling Algotihm //
 func runSJF(proccessNum, runFor, quantum int, procs []process)() {
 
 }
 
-// -------------------------------- //
+// ------------------------------- //
 // Execute RR Scheduling Algotihm //
 func runRR(proccessNum, runFor, quantum int, procs []process)() {
 
