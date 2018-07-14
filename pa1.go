@@ -110,9 +110,12 @@ func lookConvert(word string, words []string) (int) {
 // ------------------------------------------- //
 // Struct holds information about each process //
 type process struct {
+  pnum int
   ID string
   arrival int
   burst int
+  wait int
+  turnaround int
 }
 
 
@@ -134,6 +137,7 @@ func qProcesses(algorithm int, input string)([]process) {
   var lines []string
   var procs []process
   var proc *process
+  count := 0
 
   // Scanning lines
   for scanner.Scan() {
@@ -145,13 +149,15 @@ func qProcesses(algorithm int, input string)([]process) {
 
     // Will only extract Round Robin format
     if algorithm == 3 && i > 3 {
-      proc = extractInfo(lines[i])
+      proc = extractInfo(lines[i], count)
       procs = append(procs, *proc)
+      count = count + 1
 
     // Will extract anything else
     } else if algorithm != 3 && i > 2 {
-      proc = extractInfo(lines[i])
+      proc = extractInfo(lines[i], count)
       procs = append(procs, *proc)
+      count = count + 1
     }
   }
   return procs
@@ -161,7 +167,7 @@ func qProcesses(algorithm int, input string)([]process) {
 // Returns a process struct from string            //
 // No need to search since input is structured as: //
 // "process name ID arrival # burst #"             //
-func extractInfo(line string) (*process) {
+func extractInfo(line string, pnum int) (*process) {
 
   // Allocating memory for process' info extraction
   proc := new(process)
@@ -172,6 +178,7 @@ func extractInfo(line string) (*process) {
 
   // Parse info to struct for lines with 7 words or more
   if len(words) > 6 {
+    proc.pnum = pnum
     proc.ID = words[2]
     proc.arrival = toInteger(words[4])
     proc.burst = toInteger(words[6])
@@ -184,15 +191,6 @@ func extractInfo(line string) (*process) {
 // Will sort the structs by arrival and return procs //
 func sortArrivals(procs []process)([]process) {
 
-  var sorted []int //
-
-  // Appending flags to array
-  for i := 0; i < len(procs); i++ { // debug dont need
-    sorted = append(sorted, procs[i].arrival)
-    //fmt.Println("Unsorted, ID: ",procs[i].ID," arrival: ", sorted[i])
-  }
-
-
   // Bubble sort the structs by arrival time
   for x := 0; x < len(procs); x = x + 1 {
     for i := 0; i < len(procs) - 1; i = i + 1 {
@@ -202,26 +200,57 @@ func sortArrivals(procs []process)([]process) {
     }
   }
 
-
-  //fmt.Println("\n")
-  for i := 0; i < len(procs); i++ {
-    //fmt.Println("Sorted, ID: ",procs[i].ID," arrival: ", procs[i].arrival, " burst: ", procs[i].burst)
-  }
   return procs
 }
 
+// ------------------------------------------ //
+// Calculate waiting time and turnaround time //
+func schedulePerformace(procs []process, selecTime, finished []int)() {
+
+  var wt []int            // Storage for weight times
+  var tt []int            // Storage for turnaround times
+  proc := new(process)    // Process created
+  var times = make([]process, len(procs))    // Array of processes created
+
+  // Calcualte wait times
+  for i := 0; i < len(procs); i = i + 1 {
+    wt = append(wt, selecTime[i] - procs[i].arrival)
+  }
+
+  // Calculate turnaround times
+  for i := 0; i < len(procs); i = i + 1 {
+    tt = append(tt, finished[i] - procs[i].arrival)
+  }
+
+  // Assign performances and sort by increasing process ID
+  for i := 0; i < len(procs); i = i + 1 {
+    proc.ID = procs[i].ID
+    proc.arrival = procs[i].arrival
+    proc.wait = wt[i]
+    proc.turnaround = tt[i]
+    times[procs[i].pnum] = *proc
+  }
+
+  // Output schedule performace results
+  for i := 0; i < len(times); i = i + 1 {
+    fmt.Println(times[i].ID, " wait ", times[i].wait, " turnaround ", times[i].turnaround)
+  }
+}
 
 
 // -------------------------------- //
 // Execute FCFS Scheduling Algotihm //
-func runFCFS(proccessNum, runFor, quantum int, procs []process)() {
+func runFCFS(proccessNum, runFor, quantum int, procs []process, file string)() {
 
-  time := 0       // Clock
-  run := true     // Starts/Terminates algorithm
-  proc := 0       // Index of current process
-  busy := false   // True indicates a process is running
-  finish := 0     // Index of process that is running
-  began := 0      // Flag tracks when in time the process started
+  time := 0           // Clock
+  run := true         // Starts/Terminates algorithm
+  proc := 0           // Index of current process
+  busy := false       // True indicates a process is running
+  finish := 0         // Index of process that is running
+  began := 0          // Flag tracks when in time the process started
+  var selecTime []int // Saves order of when a process was selected
+  var finTime []int   // Saves order of when a process finished
+
 
   for run {
 
@@ -237,6 +266,7 @@ func runFCFS(proccessNum, runFor, quantum int, procs []process)() {
     if (time == began + procs[finish].burst) && busy {
       fmt.Println("Time ", time, " : ", procs[finish].ID, " finished")
       busy = false
+      finTime = append(finTime, time)
       if proc < len(procs) {
         proc = proc + 1
       }
@@ -249,6 +279,7 @@ func runFCFS(proccessNum, runFor, quantum int, procs []process)() {
         busy = true
         finish = proc
         began = time
+        selecTime = append(selecTime, time)
       }
     }
 
@@ -261,10 +292,14 @@ func runFCFS(proccessNum, runFor, quantum int, procs []process)() {
 
     // Only run for given time
     if time == runFor {
-      fmt.Println("Finished at time ", time)
+      fmt.Println("Finished at time ", time, "\n")
       run = false
     }
   }
+
+  // Print performance of schedule
+  schedulePerformace(procs, selecTime, finTime)
+
 }
 
 
@@ -326,6 +361,8 @@ func main () {
   sortedArr := sortArrivals(ss)
   //fmt.Println("ID: ",ss[9].ID, " arrival: ", ss[9].arrival, " burst: ", ss[9].burst)
 
-  runFCFS(processCount, runFor, quantum, sortedArr)
+  //selected, finished := runFCFS(processCount, runFor, quantum, sortedArr)
+  //schedulePerformace(sortedArr, selected, finished)
+  runFCFS(processCount, runFor, quantum, sortedArr, file)
 
 }
