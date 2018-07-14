@@ -15,6 +15,7 @@ import (
   "strings"
   "strconv"
   "os"
+  //"sort"
 )
 
 
@@ -31,7 +32,6 @@ func checkErr(e error) {
 // ------------------------------------ //
 // Gets scheduling algorithm setup info //
 func setupInfo(words []string) (processCount, runFor, quantum, algorithm int) {
-  fmt.Println("Runing setup:\n") // debug
 
   // Searching, converting, and assigning setup info
   processCount = lookConvert("processcount", words)
@@ -170,9 +170,8 @@ func extractInfo(line string) (*process) {
   // Splitting string
   words = strings.Split(line, " ")
 
-  // Parse info to struct for lines with > 7 words
+  // Parse info to struct for lines with 7 words or more
   if len(words) > 6 {
-    fmt.Println("word: ", words, "len: ", len(words))
     proc.ID = words[2]
     proc.arrival = toInteger(words[4])
     proc.burst = toInteger(words[6])
@@ -181,22 +180,93 @@ func extractInfo(line string) (*process) {
 }
 
 
+// ------------------------------------------------- //
+// Will sort the structs by arrival and return procs //
+func sortArrivals(procs []process)([]process) {
+
+  var sorted []int //
+
+  // Appending flags to array
+  for i := 0; i < len(procs); i++ { // debug dont need
+    sorted = append(sorted, procs[i].arrival)
+    fmt.Println("Unsorted, ID: ",procs[i].ID," arrival: ", sorted[i])
+  }
+
+
+  // Bubble sort the structs by arrival time
+  for x := 0; x < len(procs); x = x + 1 {
+    for i := 0; i < len(procs) - 1; i = i + 1 {
+      if procs[i].arrival > procs[i + 1].arrival {
+        procs[i], procs[i + 1] = procs[i + 1], procs[i]
+      }
+    }
+  }
+
+
+  fmt.Println("\n")
+  for i := 0; i < len(procs); i++ {
+    fmt.Println("Sorted, ID: ",procs[i].ID," arrival: ", procs[i].arrival)
+  }
+  return procs
+}
+
+
+
 // -------------------------------- //
 // Execute FCFS Scheduling Algotihm //
-func runFCFS()() {
+func runFCFS(proccessNum, runFor, quantum int, procs []process)() {
 
+  time := 0
+  run := true
+  proc := 0
+  busy := false
+
+  for run {
+
+    // Process arrived
+    if time == procs[proc].arrival {
+      fmt.Println("Time ", time, " : ", procs[proc].ID, " arrived")
+    }
+
+    // Process Finished
+    if time == (procs[proc].arrival + procs[proc].burst) {
+      fmt.Println("Time ", time, " : ", procs[proc].ID, " finished")
+      busy = false
+    }
+
+
+    // If no process running, then select next arrival
+    if (time == procs[proc].arrival) && !busy {
+      fmt.Println("Time ", time, " : ", procs[proc].ID, " selected (burst ", procs[proc].burst,")")
+      busy = true
+    }
+
+
+    if time >= procs[proc].arrival + procs[proc].burst {
+      proc = proc + 1
+    }
+
+    //fmt.Println("TIME: ", time)
+    time = time + 1
+
+    // Only run for given time
+    if time == runFor {
+      run = false
+    }
+
+  }
 
 }
 
 // -------------------------------- //
 // Execute SJF Scheduling Algotihm //
-func runSJF()() {
+func runSJF(proccessNum, runFor, quantum int, procs []process)() {
 
 }
 
 // -------------------------------- //
 // Execute RR Scheduling Algotihm //
-func runRR()() {
+func runRR(proccessNum, runFor, quantum int, procs []process)() {
 
 }
 
@@ -239,13 +309,13 @@ func main () {
   quantum = quantum
   algorithm = algorithm
 
-  fmt.Println("pcount: ", processCount, " runfor: ", runFor, " quantum: ", quantum, "algorithm: ", algorithm)
+  fmt.Println("pcount: ", processCount, " runfor: ", runFor, " quantum: ", quantum, "algorithm: ", algorithm, "\n")
 
 
   ss := qProcesses(algorithm, file)
-  ss = ss
-  fmt.Println("ID: ",ss[9].ID)
+  sortedArr := sortArrivals(ss)
+  //fmt.Println("ID: ",ss[9].ID, " arrival: ", ss[9].arrival, " burst: ", ss[9].burst)
 
-
+  runFCFS(processCount, runFor, quantum, sortedArr)
 
 }
