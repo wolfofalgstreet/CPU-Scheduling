@@ -1,11 +1,11 @@
 // Created By Isaias Perez Vega
+// NID: is352549
 // CPU - Scheduling Algorithms
 // Program implements the first-come firs-served, shortest-job first,
 // and round robin algorithms.
 //
 
 package main
-
 
 import (
   "bufio"
@@ -87,7 +87,7 @@ func find(item string, list []string) (index int) {
 
   // Before returning check if the word was found
   if index == -1 {
-    fmt.Println("Did not find ", item, " in memory..")
+    //fmt.Println("Did not find ", item, " in memory..")
   }
   return index
 }
@@ -101,7 +101,7 @@ func lookConvert(word string, words []string) (int) {
 
   // Type conversion error handling
   if err != nil {
-    fmt.Println("Conversion of var ", word, " failed!\n")
+    //fmt.Println("Conversion of var ", word, " failed!\n")
   }
   return num
 }
@@ -124,7 +124,7 @@ type process struct {
 // Return all precesses as array of process structs  //
 func qProcesses(algorithm int, input string)([]process) {
 
-  // Reading file and close when done
+  // Read file and close when done
   file, err := os.Open(input)
   checkErr(err)
   defer file.Close()
@@ -207,10 +207,10 @@ func sortArrivals(procs []process)([]process) {
 // Calculate waiting time and turnaround time //
 func schedulePerformace(procs []process, selecTime, finished []int)() {
 
-  var wt []int            // Storage for weight times
-  var tt []int            // Storage for turnaround times
-  proc := new(process)    // Process created
-  var times = make([]process, len(procs))    // Array of processes created
+  var wt []int                                // Storage for weight times
+  var tt []int                                // Storage for turnaround times
+  proc := new(process)                        // Process created
+  var times = make([]process, len(procs))     // Array of processes created
 
   // Calcualte wait times
   for i := 0; i < len(procs); i = i + 1 {
@@ -240,17 +240,19 @@ func schedulePerformace(procs []process, selecTime, finished []int)() {
 
 // -------------------------------- //
 // Execute FCFS Scheduling Algotihm //
-func runFCFS(proccessNum, runFor, quantum int, procs []process, file string)() {
+func runFCFS(proccessNum, runFor, quantum int, procs []process)() {
 
-  time := 0           // Clock
-  run := true         // Starts/Terminates algorithm
-  proc := 0           // Index of current process
-  busy := false       // True indicates a process is running
-  finish := 0         // Index of process that is running
-  began := 0          // Flag tracks when in time the process started
-  var selecTime []int // Saves order of when a process was selected
-  var finTime []int   // Saves order of when a process finished
+  time := 0              // Clock
+  run := true            // Starts/Terminates algorithm
+  proc := 0              // Index of current process
+  busy := false          // True indicates a process is running
+  finish := 0            // Index of process that is running
+  began := 0             // Flag tracks when in time the process started
+  var selecTime []int    // Saves order of when a process was selected
+  var finTime []int      // Saves order of when a process finished
 
+  fmt.Println(" ", proccessNum, " processes")
+  fmt.Println("Using First-Come First-Served")
 
   for run {
 
@@ -307,10 +309,90 @@ func runFCFS(proccessNum, runFor, quantum int, procs []process, file string)() {
 // Execute SJF Scheduling Algotihm //
 func runSJF(proccessNum, runFor, quantum int, procs []process)() {
 
+
+  time := 0                    // Clock
+  run := true                  // Flag terminates algorithm
+  busy := false                // True indicates a process is running
+  finish := 0                  // Tracks the process tthat was selected
+  began := 0                   // Tracks when in time the process was selected
+  proc := 0                    // Tracks the index of the current process
+  inHold := false              // Flag indicates when a process preemptived
+  partialProcSize := 0         //
+  var currentProc, holdProc, minProc process
+  //var mins []process
+
+  fmt.Println(" ", proccessNum, " processes")
+  fmt.Println("Using preemptive Shortest Job First")
+  for run {
+
+    // process arrived
+    for i := 0; i < len(procs); i = i + 1 {
+      if time == procs[i].arrival {
+        fmt.Println("Time ", time, " : ", procs[i].ID, " arrived")
+
+        // Check if new arrival has shorter burst than current
+        if procs[i].burst < currentProc.burst {
+          partialProcSize = time - currentProc.arrival
+          //fmt.Println("Detected shorter burst")
+          fmt.Println("Time ", time, " : ", procs[i].ID, " selected (burst ", procs[i].burst,")")
+          holdProc = currentProc
+          inHold = true
+        }
+        break
+      }
+    }
+
+    holdProc = holdProc //
+    partialProcSize = partialProcSize //
+    minProc = minProc //
+
+    // Process Finished
+    if (time == began + procs[finish].burst) && busy {
+      fmt.Println("Time ", time, " : ", procs[finish].ID, " finished")
+      busy = false
+      //finTime = append(finTime, time)
+      if proc < len(procs) {
+        proc = proc + 1
+      }
+
+      // Check if there is a partial process that needs to finish
+      if inHold {
+
+      }
+
+
+    }
+
+
+    // Selecting process to run next
+    if !busy && proc < len(procs){
+      if time >= procs[proc].arrival {
+        //fmt.Println("Time ", time, " : ", procs[proc].ID, " selected (burst ", procs[proc].burst,")")
+        busy = true
+        finish = proc
+        began = time
+        currentProc = procs[proc]
+        //selecTime = append(selecTime, time)
+      }
+    }
+
+
+    // process idles state
+
+
+    time = time + 1
+
+    if time == runFor {
+      fmt.Println("Finished at time ", time, "\n")
+      run = false
+    }
+    finish = finish
+    began = began
+  }
 }
 
-// ------------------------------- //
-// Execute RR Scheduling Algotihm //
+// --------------------------------------- //
+// Execute Round Robin Scheduling Algotihm //
 func runRR(proccessNum, runFor, quantum int, procs []process)() {
 
 }
@@ -319,7 +401,7 @@ func runRR(proccessNum, runFor, quantum int, procs []process)() {
 func main () {
 
   // Read file and close it when done
-  file := "c10-fcfs.in"
+  file := "c10-sjf.in"
   input, err := os.Open(file)
   checkErr(err)
   defer input.Close()
@@ -337,14 +419,20 @@ func main () {
   // Scheduling Algorithm setup info
   processCount, runFor, quantum, algorithm := setupInfo(words)
 
+  ss := qProcesses(algorithm, file)
+  sortedArr := sortArrivals(ss)
+
+
   // Execute selected scheduling algorithm
   switch algorithm {
-  case 1:           // First-Come First-Served
-    fmt.Println("Run: ", algorithm)
-  case 2:           // Shortest-Job First
-    fmt.Println("Run: ", algorithm)
-  case 3:           // Round Robin
-    fmt.Println("Run: ", algorithm)
+  case 1:                               // First-Come First-Served
+    runFCFS(processCount, runFor, quantum, sortedArr)
+
+  case 2:                               // Shortest-Job First
+    runSJF(processCount, runFor, quantum, sortedArr)
+
+  case 3:                               // Round Robin
+    runRR(processCount, runFor, quantum, sortedArr)
   }
 
 
@@ -354,15 +442,8 @@ func main () {
   quantum = quantum
   algorithm = algorithm
 
-  fmt.Println("pcount: ", processCount, " runfor: ", runFor, " quantum: ", quantum, "algorithm: ", algorithm, "\n")
+  //fmt.Println("pcount: ", processCount, " runfor: ", runFor, " quantum: ", quantum, "algorithm: ", algorithm, "\n")
 
 
-  ss := qProcesses(algorithm, file)
-  sortedArr := sortArrivals(ss)
-  //fmt.Println("ID: ",ss[9].ID, " arrival: ", ss[9].arrival, " burst: ", ss[9].burst)
-
-  //selected, finished := runFCFS(processCount, runFor, quantum, sortedArr)
-  //schedulePerformace(sortedArr, selected, finished)
-  runFCFS(processCount, runFor, quantum, sortedArr, file)
 
 }
